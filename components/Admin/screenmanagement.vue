@@ -1,12 +1,9 @@
 <template>
   <div class="card mb-4">
-    <div class="card-header bg-transparent">
-      <h4>
-        Screen and Module Management (<span style="color: red"
-          >*Please contact your system administrator for assistance</span
-        >)
-      </h4>
-    </div>
+    <div class="card-header icon-title">
+                            <a href="#"><i class="fa fa-shield-alt"></i></a>
+                            <h4>Access Control</h4>
+                        </div>
     <div class="card-body">
       <nav>
         <ul class="nav sub-tab" id="nav-tab" role="tablist">
@@ -18,7 +15,7 @@
               role="tab"
               aria-controls="nav-Module"
               aria-selected="true"
-              ><i class="fa fa-user-lock"></i> Setting 1: Module</a
+              ><i class="fa fas fa-bars"></i> Setting 1: Module</a
             >
           </li>
           <li class="nav-item">
@@ -30,7 +27,7 @@
               role="tab"
               aria-controls="nav-Sub-Module"
               aria-selected="false"
-              ><i class="fa fa-ban"></i> Setting 2: Sub Module</a
+              ><i class="fa fas fa-align-left"></i> Setting 2: Sub Module</a
             >
           </li>
           <li class="nav-item">
@@ -42,9 +39,10 @@
               role="tab"
               aria-controls="nav-Screen-Page"
               aria-selected="false"
-              ><i class="fa fa-clock"></i> Setting 3: Screen Page</a
+              ><i class="fa far fa-file"></i> Setting 3: Screen Page</a
             >
           </li>
+        
         </ul>
       </nav>
 
@@ -60,6 +58,7 @@
         <div class="tab-pane fade" id="nav-Screen-Page" role="tabpanel">
           <Screenpage />
         </div>
+       
       </div>
     </div>
   </div>
@@ -69,7 +68,7 @@ import Module1 from "./Module1.vue";
 import Module2 from "./Module2.vue";
 import Screenpage from "./screenpage.vue";
 export default {
-  components: { Module1, Module2, Screenpage },
+  components: { Module1, Module2, Screenpage},
   name: "screenmanagement",
   setup() {},
 };

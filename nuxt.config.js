@@ -7,7 +7,7 @@ export default {
   },
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    title: "MITS 2.0",
+    title: "Araken File Management System",
     htmlAttrs: {
       lang: "en",
     },

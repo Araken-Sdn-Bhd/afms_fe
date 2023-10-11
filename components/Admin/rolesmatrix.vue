@@ -178,7 +178,7 @@
         </li>
       </ul>
         </p>
-            <button class="btn btn-success pl-15" :class="SidebarAccess!=1?'hide':''">
+            <button class="btn btn-success pl-15">
               Submit <i class="fal fa-arrow-from-left"></i>
             </button>
           </div>
@@ -199,7 +199,7 @@ export default {
       SubmoduleId: 0,
       HospitalId: 0,
       BranchId: 0,
-      teamId: 0,
+      teamId: 1,
       staffId: 0,
       screenIds: "",
       screendetail: null,
@@ -212,15 +212,14 @@ export default {
       teamlist: [],
       selected: [],
       IsSubmodule: true,
-      SidebarAccess: null,
     };
   },
   mounted() {},
   beforeMount() {
     this.userdetails = JSON.parse(localStorage.getItem("userdetails"));
-    this.SidebarAccess = JSON.parse(localStorage.getItem("SidebarAccess"));
     this.GetModuleList();
     this.GethospitalList();
+    this.onChangeTeam();
   },
   methods: {
     async checkscreen(value, event) {
@@ -325,7 +324,7 @@ export default {
 
     },
 
-    async onChangeTeam(event){
+    async onChangeTeam(){
       const headers = {
         Authorization: "Bearer " + this.userdetails.access_token,
         Accept: "application/json",
@@ -333,7 +332,7 @@ export default {
       };
       const response1 = await this.$axios.post(
         "staff-management/getUserlistbyTeam",
-        { team_id: event.target.value, branch_id: this.BranchId },
+        { team_id: 1, branch_id: 1 },
         {
           headers,
         }

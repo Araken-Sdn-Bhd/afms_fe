@@ -42,12 +42,12 @@
         </li>
       </ul>
         </p>
-      <div class="d-flex justify-content-center" :class="SidebarAccess!=1?'hide':''">
-        <button type="submit" class="btn btn-warning btn-text ml-auto" v-if="Id">
-        <i class="fa fa-save"></i> Save
+      <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-success btn-text" v-if="Id">
+        <i class="fa fa-save"></i> Update
         </button>
-         <button type="submit" class="btn btn-warning btn-text" v-if="!Id">
-          <i class="fa fa-plus"></i> Add Parameter
+         <button type="submit" class="btn btn-success btn-text" v-if="!Id">
+          <i class="fa fa-plus"></i> Add New
         </button>
       </div>
     </form>
@@ -73,8 +73,8 @@
           <td>{{smod.module_name}}</td>
          <td>{{smod.sub_module_code}}</td>
          <td>{{smod.sub_module_name}}</td>
-          <td class="td"  :class="SidebarAccess!=1?'hide':''">
-            <a class="edit" @click="editsubmodule(smod)"
+          <td class="td">
+            <a class="view" @click="editsubmodule(smod)"
               ><i class="fa fa-edit"></i
             ></a>
             <a @click="deletesubmodule(smod)" class="action-icon icon-danger"
@@ -100,7 +100,6 @@ export default {
       userdetails: null,
       modulelist: [],
       list: [],
-      SidebarAccess:null
     };
   },
   mounted() {
@@ -156,7 +155,6 @@ export default {
   },
   beforeMount() {
     this.userdetails = JSON.parse(localStorage.getItem("userdetails"));
-    this.SidebarAccess = JSON.parse(localStorage.getItem("SidebarAccess"));
     this.GetModuleList();
   },
   methods: {
@@ -189,7 +187,7 @@ export default {
               { headers }
             );
             if (response.data.code == 200 || response.data.code == "200") {
-              this.$swal.fire('Successfully Update', '', 'success');
+              this.$swal.fire('Successfully Added', '', 'success');
               this.resetmodel();
             } else {
               this.$swal.fire({
@@ -200,6 +198,7 @@ export default {
                 });
             }
           } else {
+           
             const response = await this.$axios.post(
               "screen-module/updateSubModule",
               {
@@ -212,9 +211,7 @@ export default {
               { headers }
             );
             if (response.data.code == 200 || response.data.code == "200") {
-this.$swal.fire(
-                  'Successfully Update',
-                );
+              this.$swal.fire('Successfully Updated', '', 'success');
               this.resetmodel();
             } else {
               this.$swal.fire({

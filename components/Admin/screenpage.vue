@@ -6,7 +6,7 @@
           <label for="" class="form-label">Module</label>
           <select v-model="ModuleId" class="form-select" aria-label="Default select example"
             @change="onsubmodelbind($event)">
-            <option value="0">Please Select</option>
+            <option value="">Please Select</option>
             <option v-for="mod in modulelist" v-bind:key="mod.id" v-bind:value="mod.id">
               {{ mod.module_name }}
             </option>
@@ -58,17 +58,17 @@
         </li>
       </ul>
       </p>
-      <div class="d-flex justify-content-center" :class="SidebarAccess != 1 ? 'hide' : ''">
-        <button type="submit" class="btn btn-warning btn-text ml-auto" v-if="Id">
-          <i class="fa fa-save"></i> Save
+      <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-success btn-text" v-if="Id">
+          <i class="fa fa-save"></i> Update
         </button>
-        <button type="submit" class="btn btn-warning btn-text" v-if="!Id">
-          <i class="fa fa-plus"></i> Add Parameter
+        <button type="submit" class="btn btn-success btn-text" v-if="!Id">
+          <i class="fa fa-plus"></i> Add New
         </button>
       </div>
     </form>
     <div class="table-title">
-      <h3>List of Modules</h3>
+      <h3>List of Screens</h3>
     </div>
     <table class="table table-striped data-table6 font-13 display nowrap" style="width: 100%">
       <thead>
@@ -90,7 +90,7 @@
           <td>{{ scn.screen_name }}</td>
           <td>{{ scn.screen_route }}</td>
           <td>{{ scn.screen_description }}</td>
-          <td class="td" :class="SidebarAccess != 1 ? 'hide' : ''">
+          <td class="td">
             <a class="edit" @click="editsscreen(scn)"><i class="fa fa-edit"></i></a>
             <a @click="deletescreen(scn)" class="action-icon icon-danger"><i class="fa fa-trash-alt"></i></a>
           </td>
@@ -108,29 +108,10 @@
                 {{ this.message }}
               </a>
             </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary btn-ok" data-bs-dismiss="modal">
-                Ok
-              </button>
-            </div>
           </div>
         </div>
       </div>
-      <div class="modal fade" id="deletepopupscreen" tabindex="-1" aria-labelledby="exampleModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-sm test-connection">
-          <div class="modal-content">
-            <div class="modal-body">
-              <p>Succesfully Deleted</p>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary btn-ok" data-bs-dismiss="modal">
-                Ok
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      
     </div>
   </div>
 </template>
@@ -140,20 +121,19 @@ export default {
   data() {
     return {
       Id: 0,
-      ModuleId: 0,
-      SubmoduleId: 0,
+      ModuleId: "",
+      SubmoduleId: "0",
       screenname: "",
       pageroute: "",
       description: "",
       icon: "",
-      index: 0,
+      index: 1,
       errors: [],
       userdetails: null,
       modulelist: [],
       submodulelist: [],
       list: [],
       IsSubmodule: true,
-      SidebarAccess: null,
       loader: false,
       message: "The screen route has already been taken.",
     };
@@ -211,7 +191,6 @@ export default {
   },
   beforeMount() {
     this.userdetails = JSON.parse(localStorage.getItem("userdetails"));
-    this.SidebarAccess = JSON.parse(localStorage.getItem("SidebarAccess"));
     this.GetModuleList();
   },
   methods: {
@@ -238,7 +217,7 @@ export default {
     async onAddscreen() {
       this.errors = [];
       try {
-        if (this.ModuleId <= 0) {
+        if (!this.ModuleId) {
           this.errors.push("Module is required.");
         }
         if (!this.screenname) {
@@ -286,11 +265,7 @@ export default {
               { headers }
             );
             if (response.data.code == 200 || response.data.code == "200") {
-              this.$swal.fire(
-              'Successfully Submitted.',
-              'Data is inserted.',
-              'success',
-            )
+              this.$swal.fire('Successfully Added', '', 'success');
               this.resetmodel();
             } else {
               this.$swal.fire({
@@ -317,11 +292,7 @@ export default {
             );
             console.log(response.data.message);
             if (response.data.code == 200 || response.data.code == "200") {
-              this.$swal.fire(
-              'Successfully Submitted.',
-              'Data is inserted.',
-              'success',
-              )
+              this.$swal.fire('Successfully Updated', '', 'success');
               this.resetmodel();
             } else {
               this.message = JSON.stringify(response.data.message);
@@ -338,13 +309,13 @@ export default {
       }
     },
     async resetmodel() {
-      this.ModuleId = 0;
+      this.ModuleId = "";
       this.SubmoduleId = 0;
       this.screenname = "";
       this.pageroute = "";
       this.description = "";
       this.Id = 0;
-      this.index = 0;
+      this.index = 1;
       this.icon = "";
       this.errors = [];
       this.GetList();

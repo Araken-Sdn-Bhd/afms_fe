@@ -649,7 +649,7 @@ export default {
     if (!this.userdetails) {
       this.$router.push("/");
     } else {
-      this.role = this.userdetails.user.role;
+      this.role = this.userdetails.role.role_name;
     }
   },
   mounted() {

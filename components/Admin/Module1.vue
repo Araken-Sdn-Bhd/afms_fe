@@ -50,12 +50,12 @@
         </li>
       </ul>
         </p>
-      <div class="d-flex justify-content-center" :class="SidebarAccess!=1?'hide':''">
-        <button type="submit" class="btn btn-warning btn-text ml-auto" v-if="Id">
-        <i class="fa fa-save"></i> Save
+      <div class="d-flex justify-content-center">
+        <button type="submit" class="btn btn-success btn-text" v-if="Id">
+        <i class="fa fa-save"></i> Update
         </button>
-         <button type="submit" class="btn btn-warning btn-text" v-if="!Id">
-          <i class="fa fa-plus"></i> Add Parameter
+         <button type="submit" class="btn btn-success btn-text" v-if="!Id">
+          <i class="fa fa-plus"></i> Add New
         </button>
       </div>
     </form>
@@ -83,8 +83,8 @@
            <td>{{mod.module_name}}</td>
           <td>{{mod.module_short_name}}</td>
          <td>{{mod.module_order}}</td>
-            <td class="td"  :class="SidebarAccess!=1?'hide':''">
-            <a class="edit" @click="editmodule(mod)"
+            <td class="td">
+            <a class="view" @click="editmodule(mod)"
               ><i class="fa fa-edit"></i
             ></a>
             <a @click="deletemodule(mod)" class="action-icon icon-danger"
@@ -110,7 +110,6 @@ export default {
       errors: [],
       userdetails: null,
       modulelist: [],
-      SidebarAccess:null
     };
   },
   mounted() {
@@ -165,7 +164,6 @@ export default {
   },
   beforeMount() {
     this.userdetails = JSON.parse(localStorage.getItem("userdetails"));
-    this.SidebarAccess = JSON.parse(localStorage.getItem("SidebarAccess"));
   },
   methods: {
     async onAddModule1() {
@@ -202,7 +200,7 @@ export default {
               { headers }
             );
             if (response.data.code == 200 || response.data.code == "200") {
-              this.$swal.fire('Successfully Update', '', 'success');
+              this.$swal.fire('Successfully Added', '', 'success');
               this.resetmodel();
             } else {
               this.$swal.fire({
@@ -227,9 +225,7 @@ export default {
               { headers }
             );
             if (response.data.code == 200 || response.data.code == "200") {
-this.$swal.fire(
-                  'Successfully Update',
-                );
+              this.$swal.fire('Successfully Updated', '', 'success');
               this.resetmodel();
             } else {
               this.$swal.fire({

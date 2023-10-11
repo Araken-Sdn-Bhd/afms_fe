@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import loginHome from './login-home.vue';
+import loginHome from './staff-login.vue';
 export default {
   head() {
       return {

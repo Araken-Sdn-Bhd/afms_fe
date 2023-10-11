@@ -29,44 +29,6 @@
             <span class="dot"></span>
             <i class="fas fa-bell"></i>
           </a>
-          <div
-            class="dropdown-menu dropdown-menu-end"
-            aria-labelledby="navbarDropdown"
-          >
-            <div class="notification-header">
-              <h4>All Notifications</h4>
-              <span>4</span>
-            </div>
-            <div class="notification-body scrool">
-              <div class="notification-text">
-                <a href="#">Update Patient Demographic</a>
-                <span><i class="fal fa-clock"></i> 14 mins ago</span>
-              </div>
-
-              <div class="notification-text">
-                <a href="#">Update Patient Demographic</a>
-                <span><i class="fal fa-clock"></i> 14 mins ago</span>
-              </div>
-
-              <div class="notification-text">
-                <a href="#">Update Patient Demographic</a>
-                <span><i class="fal fa-clock"></i> 14 mins ago</span>
-              </div>
-
-              <div class="notification-text">
-                <a href="#">Update Patient Demographic</a>
-                <span><i class="fal fa-clock"></i> 14 mins ago</span>
-              </div>
-
-              <div class="notification-text">
-                <a href="#">Update Patient Demographic</a>
-                <span><i class="fal fa-clock"></i> 14 mins ago</span>
-              </div>
-            </div>
-            <div class="notification-footer">
-              <a href="#">View All Notifications</a>
-            </div>
-          </div>
         </li>
       </ul>
 
@@ -83,7 +45,6 @@
             <i class="fad fa-user"></i>
             <span>
               {{name}}
-              <!-- <small>Psychiatrist</small> -->
             </span>
           </a>
           <ul
@@ -112,7 +73,7 @@ export default {
    beforeMount() {
     this.userdetails = JSON.parse(localStorage.getItem("userdetails"));
     if(this.userdetails){
-      this.name=this.userdetails.user.name;
+      this.name=this.userdetails.detail.name;
     }
   },
    methods: {

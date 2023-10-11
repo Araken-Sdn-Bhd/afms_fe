@@ -3,7 +3,7 @@
     <div class="card-body">
       <form method="post" @submit.prevent="onAddroles">
           <div class="filter-form">
-            <div class="row mt-4">
+            <div class="row mt-3">
               <div class="col-sm-6 mb-3">
                 <label class="form-label">Roles</label>
                 <select
@@ -22,8 +22,6 @@
                 </select>
               </div>
 
-            </div>
-            <div class="row mt-3">
               <div class="col-sm-6 mb-3">
                 <label class="form-label">Module Name</label>
                 <select
@@ -81,8 +79,8 @@
             </p>
           <br>
         <br>
-            <div class="d-flex">
-             <button class="next-1 btn btn-primary btn-text ml-auto"><i class="fa fa-save"></i>Save</button>
+        <div class="d-flex justify-content-center">
+             <button class=" btn btn-success btn-text"><i class="fa fa-save"></i>Save</button>
             </div>
       </form>
     </div>
@@ -118,14 +116,7 @@
                       </tr>
                     </tbody>
                   </table>
-                  <p
-                v-show="!roleListbyId.length" style=" padding: 0px;
-                margin: 10px;
-                color: red;
-                display: flex;
-                justify-content: center;">
-                No Record Found
-              </p>
+                
 
     </div>
   </div>
@@ -146,7 +137,6 @@ export default {
       roleListbyId: [],
       screenlist: [],
       selected: [],
-      SidebarAccess:null,
       search: "",
       alllist:[],
     };
@@ -156,7 +146,6 @@ export default {
   },
   beforeMount() {
     this.userdetails = JSON.parse(localStorage.getItem("userdetails"));
-    this.SidebarAccess = JSON.parse(localStorage.getItem("SidebarAccess"));
     this.GetModuleList();
     this.GetRoleList();
   },
@@ -271,7 +260,16 @@ export default {
       }
     },
     async onAddroles() {
-      if (confirm("Are you sure you want to save this selection ? ")) {
+      this.$swal.fire({
+        title: 'Are you sure to save this?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, save it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+      }
+      ).then(async (result) =>{
+        if (result.isConfirmed){
       this.errors = [];
       try {
         if (this.ModuleId <= 0) {
@@ -306,7 +304,7 @@ export default {
           );
           console.log("my response", response.data);
           if (response.data.code == 200 || response.data.code == "200") {
-            this.$swal.fire('created successfully', '', 'success');
+            this.$swal.fire('Successfully Added', '', 'success');
             this.getAlllist();
             this.ResetModel();
           } else {
@@ -327,6 +325,7 @@ export default {
                 });
       }
     }
+    })
     },
     async ResetModel() {
       this.ModuleId = 0;
@@ -335,7 +334,16 @@ export default {
       this.screenlist = [];
     },
     async delRecord(data) {
-      if (confirm("Are you sure you want to delete this access ? ")) {
+      this.$swal.fire({
+        title: 'Are you sure to Delete this?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Yes, save it!',
+        cancelButtonText: 'No, cancel!',
+        reverseButtons: true
+      }
+      ).then(async (result) =>{
+        if (result.isConfirmed){
         try {
       const headers = {
         Authorization: "Bearer " + this.userdetails.access_token,
@@ -363,6 +371,7 @@ export default {
                 });
       }
     }
+    })
     },
     OnSearch() {
       if (this.search) {

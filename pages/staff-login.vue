@@ -1,12 +1,11 @@
 <template>
   <div class="bg-login bg-login-1">
     <div class="row login-box">
-      <img src="~/assets/images/mentari.png" />
-      <h4>Staff Login</h4>
+      <img src="~/assets/images/logo-login.png" />
       <Loader v-if="loader" />
       <form method="post" @submit.prevent="login">
         <div class="mb-3">
-          <label for="inputEmail">User ID</label>
+          <label for="inputEmail">Login ID</label>
           <input
             class="form-control"
             id="inputEmail"
@@ -28,22 +27,9 @@
           />
         </div>
         <Error :message="emailerror" v-if="emailerror" />
-        <div class="form-check d-flex align-items-center">
-          <div class="">
-            <input
-              class="form-check-input"
-              id="inputRememberPassword"
-              type="checkbox"
-              value=""
-            />
-            <label class="form-check-label" for="inputRememberPassword"
-              >Remember Me</label
-            >
-          </div>
-        </div>
-        <div class="d-flex align-items-center">
+    
+        <div class="d-flex align-items-center mt-3">
           <input type="submit" class="btn login-btn" value="Login" />
-          <!-- <a class="btn login-btn" href="">Login</a> -->
         </div>
       </form>
     </div>
@@ -123,7 +109,7 @@ export default {
         console.log("my error", e);
         console.log("api not working");
         this.loader = false;
-        this.emailerror = "Email and Password does not match"; //$user.message.email; //e.response.data.message;
+        this.emailerror = "Email and Password does not match";
       }
       console.log("my data", this.userdetail);
     },

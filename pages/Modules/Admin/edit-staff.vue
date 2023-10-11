@@ -359,9 +359,7 @@ export default {
             }
           );
           if (response.data.code == 200 || response.data.code == "200") {
-            this.$swal.fire(
-              'Successfully Updated',
-            );
+            this.$swal.fire('Successfully Updated', '', 'success');
             this.$router.push("/modules/Admin/staff-management");
           } else {
             this.$swal.fire({
