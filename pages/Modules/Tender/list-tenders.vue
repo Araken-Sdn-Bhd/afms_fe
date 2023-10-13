@@ -8,10 +8,10 @@
             <div class="page-title">
               <h1>Tender Management</h1>
               <div class="btn-group-a">
-                <a @click="addstaff()" class="add-btn"><em class="fa fa-plus"></em></a>
+                <a href="/app/modules/Tender/new-tender" class="add-btn" title="Add Tender"><em class="fa fa-plus"></em></a>
               </div>
             </div>
-  
+
             <div class="card mb-4">
                 <div class="card-header icon-title">
                             <a href="#"><i class="fa fa-list"></i></a>
@@ -20,7 +20,7 @@
               <div class="card-body">
                 <div class="search-table">
                   <div class="row mt-2">
-  
+
                     <div class="col-lg-4 col-sm-6 mb-3">
                       <div class="input-group">
                         <span class="input-group-text bg-transparent br-0"><i class="fa fa-search"></i></span>
@@ -43,19 +43,19 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="(staff,index) in stafflist" :key="index">
+                    <tr v-for="(tender,index) in tenderlist" :key="index">
                       <td>#{{ index+1}}</td>
                       <td>{{ staff.name }}</td>
                       <td>{{ staff.nric_no }}</td>
                       <td>
-                        <a @click="edit(staff)" class="view" title="edit staff profile"><em class="fa fa-edit"></em></a>
-                        <!--<a class="view" @click="Onview(staff)" title="view user matrix"><em class="fa fa-bars"></em></a>-->
+                        <!-- <a @click="edit(staff)" class="view" title="edit staff profile"><em class="fa fa-edit"></em></a> -->
+                        <a class="view" @click="Onview(tender)" title="view user matrix"><em class="fa fa-bars"></em></a>
                       </td>
                     </tr>
                   </tbody>
                 </table>
                 </div>
-  
+
               </div>
             </div>
           </div>
@@ -69,28 +69,34 @@
   export default {
     components: { CommonSidebar, CommonHeader },
     name: "list-tenders",
-    
-    
+
+
     data() {
       return {
-       
+
       };
     },
-  
+
     mounted() {
-     
+
     },
     beforeMount() {
-     
-  
+
+
     },
     methods: {
-    
+      async Onview() {
+        this.$router.push({
+                    path: "/modules/Tender/view-tender",
+                    query: {
+                        id: this.Id,
+                    },
+                });
+      }
     }
   };
   </script>
   <style scoped>
-  
-  
+
+
   </style>
-  
