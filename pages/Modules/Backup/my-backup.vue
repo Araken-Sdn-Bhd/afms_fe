@@ -24,11 +24,11 @@
                   <div class="row mt-2">
                     <div class="col-lg-4 col-sm-6 mb-3">
                         <label for="date_from">FROM:</label>
-                        <input type="date" class="form-control" v-model="date_from" @change="onchange($event)" id="date_from"/>
+                        <input type="date" class="form-control" v-model="date_from" :max="this.date_to" @change="onchange($event)" id="date_from"/>
                     </div>
                     <div class="col-lg-4 col-sm-6 mb-3">
                         <label for="date_to">TO:</label>
-                        <input type="date" class="form-control" v-model="date_to" @change="onchange($event)" id="date_to"/>
+                        <input type="date" class="form-control" v-model="date_to" :min="this.date_from" @change="onchange($event)" id="date_to"/>
                     </div>
   
                     <div class="col-lg-4 col-sm-6 mb-3">
