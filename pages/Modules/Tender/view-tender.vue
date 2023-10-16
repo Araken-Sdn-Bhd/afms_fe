@@ -15,13 +15,13 @@
                         <div class="row">
                             <div class="col-md-12 mb-4">
                                 <label for="" class="form-label">Title<span style="color:red">*</span></label>
-                                <input type="text" class="form-control" placeholder="Enter Title" v-model="titles" />
+                                <input disabled type="text" class="form-control" placeholder="Enter Title" v-model="title" />
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12 mb-4">
                                 <label for="" class="form-label">Client<span style="color:red">*</span></label>
-                                <select v-model="clientID" class="form-select" aria-label="Default select example">
+                                <select disabled v-model="clientID" class="form-select" aria-label="Default select example">
                                     <option value="">Please Select</option>
                                     <option v-for="client in clientlist" v-bind:key="client.client_id" v-bind:value="client.client_id">
                                         {{ client.client_name }}
@@ -32,30 +32,30 @@
                         <div class="row">
                             <div class="col-md-6 mb-4">
                                 <label for="" class="form-label">Submission Date<span style="color:red">*</span></label>
-                                <input type="date" class="form-control" v-model="sub_date" />
+                                <input disabled type="date" class="form-control" v-model="sub_date" />
                             </div>
                             <div class="col-md-6 mb-4">
                                 <label for="" class="form-label">Submission Price<span style="color:red">*</span></label>
-                                <input type="text" class="form-control" placeholder="RM0.00" v-model="sub_price" />
+                                <input disabled type="text" class="form-control" placeholder="RM0.00" v-model="sub_price" />
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-6 mb-4">
                                 <label for="" class="form-label">Reference No.<span style="color:red">*</span></label>
-                                <input type="text" class="form-control" placeholder="Enter Reference No." v-model="reference_no" />
+                                <input disabled type="text" class="form-control" placeholder="Enter Reference No." v-model="reference_no" />
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-md-12 mb-8">
                                 <label for="" class="form-label">Remarks<span style="color:red">*</span></label>
-                                <textarea class="form-control" placeholder="Enter Description" v-model="remarks"></textarea>
+                                <textarea disabled class="form-control" placeholder="Enter Description" v-model="remarks"></textarea>
                             </div>
                         </div>
                         <br>
                         <div class="row">
                             <div class="col-md-12 mb-8">
                                 <label for="" class="form-label">Tender Requirement<span style="color:red">*</span></label>
-                                <input class="form-control" id="file-input" for="file-input" type="file" v-on:change="selectFile">
+                                <input disabled class="form-control" id="file-input" for="file-input" type="file" v-on:change="selectFile">
                             </div>
                         </div>
                         <br>
@@ -67,7 +67,7 @@
                                 <div>
                                     <div class="col-md-6">
                                         <label for="" class="form-label">Technical<span style="color:red">*</span></label>
-                                        <input class="form-control" id="file-input" for="file-input" type="file" v-on:change="selectFile">
+                                        <input disabled class="form-control" id="file-input" for="file-input" type="file" v-on:change="selectFile">
                                     </div>
                                 </div>
                             </div>
@@ -75,7 +75,7 @@
                                 <div>
                                     <div class="col-md-6">
                                         <label for="" class="form-label">Financial<span style="color:red">*</span></label>
-                                        <input class="form-control" id="file-input" for="file-input" type="file" v-on:change="selectFile">
+                                        <input disabled class="form-control" id="file-input" for="file-input" type="file" v-on:change="selectFile">
                                     </div>
                                 </div>
                             </div>
@@ -83,7 +83,7 @@
                                 <div>
                                     <div class="col-md-6">
                                         <label for="" class="form-label">Other<span style="color:red">*</span></label>
-                                        <input class="form-control" id="file-input" for="file-input" type="file" v-on:change="selectFile">
+                                        <input disabled class="form-control" id="file-input" for="file-input" type="file" v-on:change="selectFile">
                                     </div>
                                 </div>
                             </div>
@@ -97,13 +97,7 @@
 
                         <br>
                         <div class="d-flex">
-                            <button @click="GoBack" class="btn btn-primary btn-text"><i class="fa fa-arrow-alt-to-left"></i> Previous
-                            </button>
-                            <div class="btn-right">
-                                <button type="submit" @click="onSubmit()" class="btn btn-success btn-text">
-                                    <i class="fas fa-save"></i> Save Record
-                                </button>
-                            </div>
+                            <a href="modules/Tender/list-tenders" class="btn btn-primary btn-text"><i class="fa fa-arrow-alt-to-left"></i>Previous</a>
                         </div>
                     </div>
                 </div>
@@ -112,6 +106,8 @@
     </div>
 </div>
 </template>
+
+
 <script>
 import CommonHeader from '../../../components/CommonHeader.vue';
 import CommonSidebar from '../../../components/CommonSidebar.vue';
@@ -120,14 +116,15 @@ export default {
         CommonSidebar,
         CommonHeader
     },
-    name: "new-tender",
+    name: "view-tender",
 
     data() {
         return {
             clientlist: [],
+            Id: 0,
             errors: [],
             user_id: "",
-            titles: "",
+            title: "",
             clientID: "",
             sub_date: "",
             sub_price: "",
@@ -143,11 +140,43 @@ export default {
     },
     beforeMount() {
         this.userdetails = JSON.parse(localStorage.getItem("userdetails"));
+        let urlParams = new URLSearchParams(window.location.search);
+        this.Id = urlParams.get("id");
         this.user_id = this.userdetails.user.id;
+
+        this.GetTenderbyId();
         this.GetClient();
 
     },
     methods: {
+        async GetTenderbyId() {
+            const headers = {
+                Authorization: "Bearer " + this.userdetails.access_token,
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            };
+            const response = await this.$axios.post(
+                "tender/getTender", {
+                    tender_id: this.Id
+                }, {
+                    headers
+                }
+            );
+
+            if (response.data.code == 200) {
+
+                this.Id = response.data.tender[0].tender_id;
+                this.user_id = response.data.tender[0].user_id;
+                this.clientID = response.data.tender[0].client_id;
+                this.title = response.data.tender[0].title;
+                this.sub_date = response.data.tender[0].submission_date;
+                this.sub_price = response.data.tender[0].submission_price;
+                this.reference_no = response.data.tender[0].reference_no;
+                this.remarks = response.data.tender[0].remark;
+                // alert('sini ke')
+
+            }
+        },
         async GetClient() {
             const headers = {
                 Authorization: "Bearer " + this.userdetails.access_token,
@@ -158,105 +187,12 @@ export default {
                 headers
             });
             this.clientlist = response.data.list;
-        },
-
-        async selectFile(event) {
-            // const selectedFile = event.target.files[0];
-            // if (selectedFile) {
-            //     if (!this.isZip(selectedFile)) {
-            //         this.errorMessage = "Invalid file format. Please choose a ZIP file.";
-            //         event.target.value = ''; // Clears the selected file
-            //     } else {
-            //         this.errorMessage = ''; // Clear any previous error message
-            //     }
-            // }
-        },
-        // isZip(file) {
-        //     // Check if the file type is a ZIP archive
-        //     return file.name.endsWith('.zip');
-        // },
-
-        async onSubmit() {
-            this.$swal.fire({
-                title: 'Are you sure to save this record?',
-                showCancelButton: true,
-                confirmButtonText: 'Yes',
-                cancelButtonText: 'Cancel',
-                reverseButtons: true
-            }).then(async (result) => {
-                if (result.isConfirmed) {
-                    this.errors = [];
-                    if (!this.titles) {
-                        this.errors.push("Title is required.");
-                    }
-                    if (!this.clientID) {
-                        this.errors.push("Client is required.");
-                    }
-                    if (!this.sub_date) {
-                        this.errors.push("Submission Date is required.");
-                    }
-                    if (!this.sub_price) {
-                        this.errors.push("Submission Price is required.");
-                    }
-                    if (!this.reference_no) {
-                        this.errors.push("Reference No. is required.");
-                    }
-                    if (!this.remarks) {
-                        this.errors.push("Remarks is required.");
-                    }
-
-                    if ((this.titles && this.clientID && this.sub_date && this.sub_price && this.reference_no && this.remarks)) {
-
-                        this.loader = true;
-                        const headers = {
-                            Authorization: "Bearer " + this.userdetails.access_token,
-                            Accept: "application/json",
-                            "Content-Type": "application/json",
-                        };
-
-                        let body = new FormData();
-                        body.append("user_id", this.user_id);
-                        body.append("title", this.titles);
-                        body.append("client_id", this.clientID);
-                        body.append("submission_date", this.sub_date);
-                        body.append("submission_price", this.sub_price);
-                        body.append("reference_no", this.reference_no);
-                        body.append("remark", this.remarks);
-
-                        const response = await this.$axios.post("tender/newTender", body, {
-                            headers
-                        });
-
-                        if (response.data.code == 200 || response.data.code == "200") {
-                            this.loader = false;
-                            await this.$swal.fire('Successfully Created', '', 'success');
-                            this.$router.push("/Modules/Tender/list-tenders");
-
-                        } else {
-                            this.loader = false;
-                            this.$swal.fire({
-                                icon: 'error',
-                                title: 'Oops... Something Went Wrong!',
-                                text: 'the error is: ' + JSON.stringify(response.data.message)
-                            });
-                        }
-                    }
-                }
-            })
-        },
-
-        async GoBack() {
-            this.$router.push({
-                path: "/modules/Tender/list-tenders",
-                query: {
-                    id: this.Id,
-                },
-            });
         }
     }
 };
 </script>
 
+
 <style scoped>
 
-  </style>
+    </style>
