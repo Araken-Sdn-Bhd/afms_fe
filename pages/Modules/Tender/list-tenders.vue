@@ -20,11 +20,20 @@
               <div class="card-body">
                 <div class="search-table">
                   <div class="row mt-2">
-
-                    <div class="col-lg-4 col-sm-6 mb-3">
-                      <div class="input-group">
+                    <div class="col-lg-3 col-sm-6 mb-3">
+                        <label for="date_from">FROM:</label>
+                        <input type="date" class="form-control" v-model="date_from" :max="this.date_to" @change="onchange($event)" id="date_from"/>
+                    </div>
+                    <div class="col-lg-3 col-sm-6 mb-3">
+                        <label for="date_to">TO:</label>
+                        <input type="date" class="form-control" v-model="date_to" :min="this.date_from" @change="onchange($event)" id="date_to"/>
+                    </div>
+  
+                    <div class="col-lg-6 col-sm-6 mb-3">
+                        <label for="search">SEARCH:</label>
+                      <div class="input-group search-table">
                         <span class="input-group-text bg-transparent br-0"><i class="fa fa-search"></i></span>
-                        <input type="text" class="form-control" v-model="filterText" placeholder="Filter by name or nric number"/>
+                        <input type="text" class="form-control" v-model="filterText" id="search" placeholder="Filter by Title, Reference No., or Submission Price"/>
                       </div>
                     </div>
                   </div>
@@ -44,12 +53,13 @@
                   </thead>
                   <tbody>
                     <tr v-for="(tender,index) in tenderlist" :key="index">
-                      <td>#{{ index+1}}</td>
-                      <td>{{ staff.name }}</td>
-                      <td>{{ staff.nric_no }}</td>
+                      <td>{{ index+1}}</td>
+                      <td>{{ getFormattedDate(tender.submission_date)}}</td>
+                      <td>{{ tender.title }}</td>
+                      <td>{{ tender.reference_no }}</td>
+                      <td>{{ tender.submission_price }}</td>
                       <td>
-                        <!-- <a @click="edit(staff)" class="view" title="edit staff profile"><em class="fa fa-edit"></em></a> -->
-                        <a class="view" @click="Onview(tender)" title="view user matrix"><em class="fa fa-bars"></em></a>
+                        <a class="view" @click="Onview(tender)" title="View tender details"><em class="fa fa-eye"></em></a>
                       </td>
                     </tr>
                   </tbody>
@@ -64,6 +74,8 @@
     </div>
   </template>
   <script>
+  import moment from 'moment';
+  import swal from 'sweetalert2';
   import CommonHeader from '../../../components/CommonHeader.vue';
   import CommonSidebar from '../../../components/CommonSidebar.vue';
   export default {
@@ -73,27 +85,72 @@
 
     data() {
       return {
-
+        alllist: [],
+        userid: [],
+        email: [],
+        filterText: "",
+        date_from: "",
+        date_to: "",
+        
       };
     },
+    computed:{
+      tenderlist() {
+        return this.alllist.filter(item => {
+            // Apply your filtering logic here
+            return (
+            item.title.toLowerCase().includes(this.filterText.toLowerCase())||
+            item.reference_no.toLowerCase().includes(this.filterText) ||
+            item.submission_price.toString().includes(this.filterText)
+            );
+        });
+      },
+    },
 
+    beforeMount() {
+      this.userdetails = JSON.parse(localStorage.getItem("userdetails"));
+      this.GetTenderList();
+    },
     mounted() {
 
     },
-    beforeMount() {
-
-
-    },
     methods: {
-      async Onview() {
+      async Onview(data) {
         this.$router.push({
                     path: "/modules/Tender/view-tender",
                     query: {
-                        id: this.Id,
+                        id: data.tender_id,
                     },
                 });
-      }
-    }
+      },
+
+      async GetTenderList(){
+            const headers = {
+                Authorization: "Bearer " + this.userdetails.access_token,
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            };
+            const response = await this.$axios.post(
+                "tender/tenderList",
+                {
+                date_from: this.date_from,
+                date_to: this.date_to
+                },{headers}
+            );
+
+            if(response.data.code == 200 || response.data.code == '200'){
+                this.alllist = response.data.list;
+            }
+      },
+      
+      getFormattedDate(date) {
+          return moment(date).format("DD/MM/YYYY")
+      },
+
+      async onchange(data){
+            this.GetTenderList();
+      },
+    },
   };
   </script>
   <style scoped>
