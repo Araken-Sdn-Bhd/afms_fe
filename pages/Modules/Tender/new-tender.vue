@@ -35,8 +35,8 @@
                                 <input type="date" class="form-control" v-model="sub_date" />
                             </div>
                             <div class="col-md-6 mb-4">
-                                <label for="" class="form-label">Submission Price<span style="color:red">*</span></label>
-                                <input type="text" class="form-control" placeholder="RM0.00" v-model="sub_price" />
+                                <label for="" class="form-label">Submission Price (RM)<span style="color:red">*</span></label>
+                                <input type="text" class="form-control" placeholder="RM0.00" v-on:keypress="NumbersOnly" v-model="sub_price"  />
                             </div>
                         </div>
                         <div class="row">
@@ -55,7 +55,7 @@
                         <div class="row">
                             <div class="col-md-12 mb-8">
                                 <label for="" class="form-label">Tender Requirement<span style="color:red">*</span></label>
-                                <input class="form-control" id="file-input" for="file-input" type="file" v-on:change="selectFile">
+                                <input class="form-control" id="file-input" for="file-input" type="file" accept=".zip" v-on:change="selectFile">
                             </div>
                         </div>
                         <br>
@@ -67,7 +67,7 @@
                                 <div>
                                     <div class="col-md-6">
                                         <label for="" class="form-label">Technical<span style="color:red">*</span></label>
-                                        <input class="form-control" id="file-input" for="file-input" type="file" v-on:change="selectFile">
+                                        <input class="form-control" id="file-input" for="file-input" type="file" accept=".zip" v-on:change="selectFile">
                                     </div>
                                 </div>
                             </div>
@@ -75,7 +75,7 @@
                                 <div>
                                     <div class="col-md-6">
                                         <label for="" class="form-label">Financial<span style="color:red">*</span></label>
-                                        <input class="form-control" id="file-input" for="file-input" type="file" v-on:change="selectFile">
+                                        <input class="form-control" id="file-input" for="file-input" type="file" accept=".zip" v-on:change="selectFile">
                                     </div>
                                 </div>
                             </div>
@@ -83,13 +83,13 @@
                                 <div>
                                     <div class="col-md-6">
                                         <label for="" class="form-label">Other<span style="color:red">*</span></label>
-                                        <input class="form-control" id="file-input" for="file-input" type="file" v-on:change="selectFile">
+                                        <input class="form-control" id="file-input" for="file-input" type="file" accept=".zip" v-on:change="selectFile">
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <p v-if="errors.length">
+                        <p v-if="errors">
                             <ul>
                                 <li style="color:red" v-for='err in errors' :key='err'>{{ err }}</li>
                             </ul>
@@ -112,6 +112,7 @@
     </div>
 </div>
 </template>
+
 <script>
 import CommonHeader from '../../../components/CommonHeader.vue';
 import CommonSidebar from '../../../components/CommonSidebar.vue';
@@ -133,8 +134,11 @@ export default {
             sub_price: "",
             reference_no: "",
             remarks: "",
-            tender_req: "",
+            tender_requirement: "",
             technical_doc: "",
+            financial_doc: "",
+            other_doc: "",
+            tr_file: ['tender_requirement', 'technical_doc_loc', 'financial_doc_loc', 'other_doc_loc'],
         };
     },
 
@@ -161,20 +165,21 @@ export default {
         },
 
         async selectFile(event) {
-            // const selectedFile = event.target.files[0];
-            // if (selectedFile) {
-            //     if (!this.isZip(selectedFile)) {
-            //         this.errorMessage = "Invalid file format. Please choose a ZIP file.";
-            //         event.target.value = ''; // Clears the selected file
-            //     } else {
-            //         this.errorMessage = ''; // Clear any previous error message
-            //     }
-            // }
+            const files = event.target.files[0];
+            if (files) {
+                if (!this.isZip(files)) {
+                    this.errors.push("Invalid file format. Please choose ZIP format only")
+                    event.target.value = ''; // Clears the selected file
+                } else {
+                    this.tr_file = event.target.files[0];
+                    this.errors = null; // Clear any previous error message
+                }
+            }
         },
-        // isZip(file) {
-        //     // Check if the file type is a ZIP archive
-        //     return file.name.endsWith('.zip');
-        // },
+        isZip(file) {
+            // Check if the file type is a ZIP archive
+            return file.name.endsWith('.zip');
+        },
 
         async onSubmit() {
             this.$swal.fire({
@@ -204,6 +209,18 @@ export default {
                     if (!this.remarks) {
                         this.errors.push("Remarks is required.");
                     }
+                    // if (!this.tender_requirement) {
+                    //     this.errors.push("Tender Requirement for Submission is required.");
+                    // }
+                    // if (!this.technical_doc) {
+                    //     this.errors.push("Technical Document for Submission is required.");
+                    // }
+                    // if (!this.financial_doc) {
+                    //     this.errors.push("Financial Document for Submission is required.");
+                    // }
+                    // if (!this.other_doc) {
+                    //     this.errors.push("Other Document for Submission is required.");
+                    // }
 
                     if ((this.titles && this.clientID && this.sub_date && this.sub_price && this.reference_no && this.remarks)) {
 
@@ -222,6 +239,10 @@ export default {
                         body.append("submission_price", this.sub_price);
                         body.append("reference_no", this.reference_no);
                         body.append("remark", this.remarks);
+                        body.append("tender_requirement", this.tr_file);
+                        body.append("financial_doc_loc", this.tr_file);
+                        body.append("technical_doc_loc", this.tr_file);
+                        body.append("other_doc_loc", this.tr_file);
 
                         const response = await this.$axios.post("tender/newTender", body, {
                             headers
@@ -244,6 +265,16 @@ export default {
                 }
             })
         },
+
+        NumbersOnly(evt) {
+      evt = (evt) ? evt : window.event;
+      var charCode = (evt.which) ? evt.which : evt.keyCode;
+      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
+        evt.preventDefault();;
+      } else {
+        return true;
+      }
+    },
 
         async GoBack() {
             this.$router.push({
